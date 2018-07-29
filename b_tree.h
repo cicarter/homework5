@@ -19,7 +19,7 @@ class BTree{
         //Common Data Structures Methods
         BTNode<dataType>* search(dataType val);
         void insert(dataType val);
-        bool Remove(dataType value_);
+        bool remove(dataType value_);
         void print() const;
 
     private:
@@ -29,7 +29,6 @@ class BTree{
 
         //Helper Functinos
         BTNode<dataType>* searchHelper(dataType val, BTNode<dataType>* curr);
-        bool removeHelper(dataType value_, BTNode<dataType>* current);
 };
 
 template <class dataType>
@@ -135,33 +134,9 @@ void BTree<dataType>::insertHelper(dataType val, BTNode* currRoot)
 // Author: Davis Campbell
 //-------------------------------------------------
 template <class dataType>
-bool BTree<dataType>::Remove(dataType value_)
+bool BTree<dataType>::remove(dataType value_)
 {
-    return removeHelper(value_, Root);
+    return 0;
 }
 
-//-------------------------------------------------
-// Method: RemoveHelper
-// Purpose: Helper function to remove an element from the B tree
-// Date: 07/28/18
-// Author: Davis Campbell
-//-------------------------------------------------
-template <class dataType>
-bool BTree<dataType>::removeHelper(dataType value_, BTNode<dataType>* current)
-{
-    BTNode<dataType>* toDelete = search(value_);
-
-    if (toDelete->isLeaf())
-    {
-        dataType toDel;
-        dataType* arr = toDelete->getDataArray();
-        for (int i = 0; i < order; i++)
-        {
-            if (arr[i] == value_)
-                cout << endl;
-        }
-    }
-return false;
-// finish later
-}
 
