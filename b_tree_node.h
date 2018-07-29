@@ -11,7 +11,7 @@
 
 /* B_Tree Node in a nutshell
 
-    Each Node is an array of size M - 1, where M is now many 
+    Each Node is an array of size order - 1, where order is now many
     children / branches a node could have
 
     The order of a tree should not be changed, else the tree has
@@ -33,7 +33,7 @@ template <class DataType>
 class BTNode{
     public:
         //Constructors & Destructors
-        BTNode(int M = 4);
+        BTNode(int order_);
         BTNode(const BTNode& from);
         ~BTNode();
 
@@ -46,11 +46,13 @@ class BTNode{
         void setChildren(BTNode** childen);
 
         //Methods
-        bool IsFull() const;
+        bool isFull() const;
         bool isEmpty() const;
+        bool isLeaf() const;
 
     private:
-        int M = 4;
+        int order;
+        int keys;
         DataType* dataArray;
         int dataArraySize;
         BTNode** children;
@@ -58,5 +60,84 @@ class BTNode{
 
 
 };
+
+#include "b_tree_node.h"
+#include <iostream>
+
+using namespace std;
+
+template <class DataType>
+BTNode<DataType>::BTNode(int order_)
+{
+    dataArray = new DataType[order_];
+    children = new BTNode*[order_];
+    order = order_;
+    keys = 0;
+}
+
+template <class DataType>
+BTNode<DataType>::BTNode(const BTNode &obj)
+{
+    //Implement a deep copy
+}
+
+template <class DataType>
+BTNode<DataType>::~BTNode()
+{
+    delete[] dataArray;
+    delete[] children;
+}
+
+template <class DataType>
+DataType* BTNode<DataType>::getDataArray() const
+{
+    return dataArray;
+}
+
+template <class DataType>
+BTNode<DataType>** BTNode<DataType>::getChildren() const
+{
+    return children;
+}
+
+template <class DataType>
+void BTNode<DataType>::setDataArray(DataType* arr)
+{
+    for(int i = 0; i < order - 1; i++)
+        dataArray[i] = arr[i];
+}
+
+template <class DataType>
+void BTNode<DataType>::setChildren(BTNode** Children)
+{
+    children = Children;
+}
+
+template <class DataType>
+bool BTNode<DataType>::isEmpty() const
+{
+    return dataArraySize == 0;
+}
+
+template <class DataType>
+bool BTNode<DataType>::isFull() const
+{
+    return dataArraySize == order - 1;
+}
+
+//-------------------------------------------------
+// Method: isLeaf
+// Purpose: Helper method which checks if a node is a leaf node by looking though the children array to see if all are NULL
+// Date: 07/28/18
+// Author: Davis Campbell
+//-------------------------------------------------
+template <class DataType>
+bool BTNode<DataType>::isLeaf() const
+{
+    for(int i = 0; i < order; i++)
+        if (children[i] != NULL)
+            return false;
+    return true;
+}
 
 #endif

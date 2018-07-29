@@ -1,0 +1,11 @@
+07/28/18 - Davis
+- Added remove helper method
+- fixed various bugs and errors
+- moved main.cpp to separate file
+- condensed the .cpp and .h for both classes into one file each as part of bug fixing
+- re-named the "M" variable in the node class to order, because that's what it was
+- added isLeaf method
+- improved logic of isFull and isEmpty
+- added changelog.txt file
+- added "keys" variable, which keeps track of the number of keys present in a node
+
