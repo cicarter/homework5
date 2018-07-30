@@ -29,6 +29,7 @@ class BTree{
 
         //Helper Functinos
         BTNode<dataType>* searchHelper(dataType val, BTNode<dataType>* curr);
+        void printHelper(BTNode<dataType>* node);
 };
 
 template <class dataType>
@@ -154,6 +155,30 @@ void BTree<dataType>::remove(dataType value_)
             Root = Root->children[0];
         delete temp;
     }
+}
+
+//-------------------------------------------------
+// Method: Print
+// Purpose: Public print function that calls PrintHelper
+// Date: 07/30/18
+// Author: Sam Yeager
+//-------------------------------------------------
+template <class dataType>
+void BTree<dataType>::print() const
+{
+    printHelper(Root);
+}
+
+//-------------------------------------------------
+// Method: printHelper
+// Purpose: Private function that prints values in descending order (lowest value first).
+// Date: 07/30/18
+// Author: Sam Yeager
+//-------------------------------------------------
+template<class dataType>
+void BTree<dataType>::printHelper(BTNode<dataType>* node)
+{
+    //TODO recursive call
 }
 
 
