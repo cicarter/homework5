@@ -180,6 +180,14 @@ void BTNode<DataType>::setKeys(int keys_)
     keys = keys_;
 }
 */
+
+//-------------------------------------------------
+// Method: remove
+// Purpose: remove an element from the tree
+// Date: 07/29/18
+// Author: Davis Campbell
+// Logic and general framework for algorithm from geeksforgeeks.org
+//-------------------------------------------------
 template <class DataType>
 void BTNode<DataType>::remove(DataType value_)
 {
@@ -192,6 +200,8 @@ void BTNode<DataType>::remove(DataType value_)
             cout << "The value " << value_ << " is not in this tree.\n";
             return;
         }
+
+        bool keyPresent = (i == keys? true : false);
 
         // From the logic, we need to fill the child node where the key is supposed to be if it's not full
         if (children[i]->keys < order)
@@ -263,24 +273,141 @@ void BTNode<DataType>::remove(DataType value_)
                 if (i != keys)
                 {
                     // merge with next sibling
+                    BTNode* First = children[i];
+                    BTNode* Next = children[i + 1];
+
+                    // copy value at current position to the end of first
+                    First->dataArray[order - 1] = dataArray[i];
+
+                    // copy child pointers over from the next node to the end of the first node
+                    if (!Next.isLeaf())
+                    {
+                        for(int j = 0; j <= Next->keys; j++)
+                            First->children[order + j] = Next->children[j];
+                    }
+
+                    // copy the values from next to first
+                    for(int j = 0; j < Next->keys; j++)
+                        First->dataArray[order + j] = Next->dataArray[j];
+
+                    // fill in the gap in the current node
+                    for (int j = i + 2; j <= order; j++)
+                        children[j - 1] = children[j];
+                    for (int j = i + 1; j < order; j++)
+                        dataArray[j - 1] = dataArray[j];
+
+                    // update key counts and free memory
+                    keys -= 1;
+                    First->keys = First->keys + Next->keys + 1;
+                    delete Next;
                 }
                 else
                 {
                     // merge with previous sibling
+                    BTNode* Previous = children[i - 1];
+                    BTNode* First = children[i];
+
+                    // copy value at current position to the end of first
+                    Previous->dataArray[order - 1] = dataArray[i];
+
+                    // copy child pointers over from the next node to the end of the first node
+                    if (!First.isLeaf())
+                    {
+                        for(int j = 0; j <= First->keys; j++)
+                            Previous->children[order + j] = First->children[j];
+                    }
+
+                    // copy the values from next to first
+                    for(int j = 0; j < First->keys; j++)
+                        Previous->dataArray[order + j] = First->dataArray[j];
+
+                    // fill in the gap in the current node
+                    for (int j = i + 2; j <= order; j++)
+                        children[j - 1] = children[j];
+                    for (int j = i + 1; j < order; j++)
+                        dataArray[j - 1] = dataArray[j];
+
+                    // update key counts and free memory
+                    keys -= 1;
+                    Previous->keys = Previous->keys + First->keys + 1;
+                    delete First;
                 }
             }
         }
 
-        bool keyPresent = (i == keys? true : false);
+        if (keyPresent && i > keys)
+            children[i - 1]->remove(value_);
+        else
+            children[i]->remove(value_);
 
-        //
     }
     else if(dataArray[i] == value_)
     {
+        if (!isLeaf())
+        {
+            // by the logic, if the child at i has at least as many keys as the order, we delete the predecessor of the key to be deleted and then put it in the key to be deleted's space
+            if (children[i]->keys >= order)
+            {
+                BTNode* Predecessor = children[i];
+                while(!Predecessor->isLeaf())
+                    Predecessor = Predecessor->children[Predecessor->keys];
+                DataType Prior = Predecessor->dataArray[Predecessor->keys - 1];
+                dataArray[i] = Prior;
+                children[i]->remove(Prior);
+            }
+            // basically the opposite of above
+            else if (children[i + 1]->keys >= order)
+            {
+                BTNode* Successor = children[i + 1];
+                while (!Successor->isLeaf())
+                    Successor = Successor->children[0];
+                DataType Post = Successor->dataArray[0];
+                dataArray[i] = Post;
+                children[i + 1]->remove(Post);
+            }
+            // if both the child and the predecessor dont have enough, merge the child into the predecessor along with the value, delete the value and the child.
+            else
+            {
+                // merge with next sibling
+                BTNode* First = children[i];
+                BTNode* Next = children[i + 1];
 
+                // copy value at current position to the end of first
+                First->dataArray[order - 1] = dataArray[i];
+
+                // copy child pointers over from the next node to the end of the first node
+                if (!Next.isLeaf())
+                {
+                    for(int j = 0; j <= Next->keys; j++)
+                        First->children[order + j] = Next->children[j];
+                }
+
+                // copy the values from next to first
+                for(int j = 0; j < Next->keys; j++)
+                    First->dataArray[order + j] = Next->dataArray[j];
+
+                // fill in the gap in the current node
+                for (int j = i + 2; j <= order; j++)
+                    children[j - 1] = children[j];
+                for (int j = i + 1; j < order; j++)
+                    dataArray[j - 1] = dataArray[j];
+
+                // update key counts and free memory
+                keys -= 1;
+                First->keys = First->keys + Next->keys + 1;
+                delete Next;
+
+                children[i]->remove(value_);
+            }
+        }
+        else
+        {
+            // move keys backward and reduce count
+            for (int j = i + 1; j < keys; j++)
+                dataArray[j - 1] = dataArray[j];
+            keys--;
+        }
     }
 }
-
-
 
 #endif

@@ -19,7 +19,7 @@ class BTree{
         //Common Data Structures Methods
         BTNode<dataType>* search(dataType val);
         void insert(dataType val);
-        bool remove(dataType value_);
+        void remove(dataType value_);
         void print() const;
 
     private:
@@ -134,9 +134,26 @@ void BTree<dataType>::insertHelper(dataType val, BTNode* currRoot)
 // Author: Davis Campbell
 //-------------------------------------------------
 template <class dataType>
-bool BTree<dataType>::remove(dataType value_)
+void BTree<dataType>::remove(dataType value_)
 {
-    return 0;
+    if(Root == NULL)
+    {
+        cout << "Error: Can not delete from empty tree";
+        return;
+    }
+
+    Root->remove(value_);
+
+    // handle the case that the root is now empty
+    if (Root->keys == 0)
+    {
+        BTNode<dataType>* temp = Root;
+        if(Root->isLeaf())
+            Root = NULL;
+        else
+            Root = Root->children[0];
+        delete temp;
+    }
 }
 
 
