@@ -17,10 +17,10 @@
 
 /* B_Tree Node in a nutshell
 
-    Each Node is an array of size order - 1, where order is now many
+    Each Node is an array of size degree - 1, where degree is now many
     children / branches a node could have
 
-    The order of a tree should not be changed, else the tree has
+    The degree of a tree should not be changed, else the tree has
     to be redone.
 
     The constructor allocates memory of the data Array on the heap
@@ -39,7 +39,7 @@ template <class DataType>
 class BTNode{
     public:
         //Constructors
-        BTNode(int order_);
+        BTNode(int degree_);
 
         // Copy constructor
         BTNode(const BTNode& from);
@@ -68,7 +68,7 @@ class BTNode{
         friend class BTree;
 
     private:
-        int order;
+        int degree;
         int keys;
         bool leaf;
         DataType* dataArray;
@@ -83,14 +83,14 @@ class BTNode{
 using namespace std;
 
 template <class DataType>
-BTNode<DataType>::BTNode(int order_)
+BTNode<DataType>::BTNode(int degree_)
 {
-    dataArray = new DataType[order_];
-    children = new BTNode*[order_];
-    order = order_;
+    dataArray = new DataType[2 * degree_ - 1];
+    children = new BTNode*[2 * degree_];
+    degree = degree_;
     keys = 0;
     leaf = true;
-    for (int i = 0; i < order_ + 1; i++)
+    for (int i = 0; i < 2 * degree_; i++)
         children[i] = NULL;
 }
 
@@ -122,7 +122,7 @@ BTNode<DataType>** BTNode<DataType>::getChildren() const
 template <class DataType>
 void BTNode<DataType>::setDataArray(DataType* arr)
 {
-    for(int i = 0; i < order - 1; i++)
+    for(int i = 0; i < degree - 1; i++)
         dataArray[i] = arr[i];
 }
 
@@ -141,7 +141,7 @@ bool BTNode<DataType>::isEmpty() const
 template <class DataType>
 bool BTNode<DataType>::isFull() const
 {
-    return dataArraySize == order - 1;
+    return dataArraySize == degree - 1;
 }
 
 //-------------------------------------------------
@@ -204,10 +204,10 @@ void BTNode<DataType>::remove(DataType value_)
         bool keyPresent = (i == keys? true : false);
 
         // From the logic, we need to fill the child node where the key is supposed to be if it's not full
-        if (children[i]->keys < order)
+        if (children[i]->keys < degree)
         {
-            // From the logic, if the next child node has more than order-1 keys we take a key from that child
-            if (i != keys && children[i + 1]->keys > order - 1)
+            // From the logic, if the next child node has more than degree-1 keys we take a key from that child
+            if (i != keys && children[i + 1]->keys > degree - 1)
             {
                 BTNode* First = children[i];
                 BTNode* Next = children[i + 1];
@@ -236,8 +236,8 @@ void BTNode<DataType>::remove(DataType value_)
                 First->keys = First->keys + 1;
             }
 
-            // From the logic, if the previous child node has more than order - 1 keys, take a key from that child
-            else if (i != 0 && children[i - 1]->keys > order - 1)
+            // From the logic, if the previous child node has more than degree - 1 keys, take a key from that child
+            else if (i != 0 && children[i - 1]->keys > degree - 1)
             {
                 BTNode* First = children[i];
                 BTNode* Previous = children[i - 1];
@@ -277,23 +277,23 @@ void BTNode<DataType>::remove(DataType value_)
                     BTNode* Next = children[i + 1];
 
                     // copy value at current position to the end of first
-                    First->dataArray[order - 1] = dataArray[i];
+                    First->dataArray[degree - 1] = dataArray[i];
 
                     // copy child pointers over from the next node to the end of the first node
                     if (!Next.isLeaf())
                     {
                         for(int j = 0; j <= Next->keys; j++)
-                            First->children[order + j] = Next->children[j];
+                            First->children[degree + j] = Next->children[j];
                     }
 
                     // copy the values from next to first
                     for(int j = 0; j < Next->keys; j++)
-                        First->dataArray[order + j] = Next->dataArray[j];
+                        First->dataArray[degree + j] = Next->dataArray[j];
 
                     // fill in the gap in the current node
-                    for (int j = i + 2; j <= order; j++)
+                    for (int j = i + 2; j <= degree; j++)
                         children[j - 1] = children[j];
-                    for (int j = i + 1; j < order; j++)
+                    for (int j = i + 1; j < degree; j++)
                         dataArray[j - 1] = dataArray[j];
 
                     // update key counts and free memory
@@ -308,23 +308,23 @@ void BTNode<DataType>::remove(DataType value_)
                     BTNode* First = children[i];
 
                     // copy value at current position to the end of first
-                    Previous->dataArray[order - 1] = dataArray[i];
+                    Previous->dataArray[degree - 1] = dataArray[i];
 
                     // copy child pointers over from the next node to the end of the first node
                     if (!First.isLeaf())
                     {
                         for(int j = 0; j <= First->keys; j++)
-                            Previous->children[order + j] = First->children[j];
+                            Previous->children[degree + j] = First->children[j];
                     }
 
                     // copy the values from next to first
                     for(int j = 0; j < First->keys; j++)
-                        Previous->dataArray[order + j] = First->dataArray[j];
+                        Previous->dataArray[degree + j] = First->dataArray[j];
 
                     // fill in the gap in the current node
-                    for (int j = i + 2; j <= order; j++)
+                    for (int j = i + 2; j <= degree; j++)
                         children[j - 1] = children[j];
-                    for (int j = i + 1; j < order; j++)
+                    for (int j = i + 1; j < degree; j++)
                         dataArray[j - 1] = dataArray[j];
 
                     // update key counts and free memory
@@ -345,8 +345,8 @@ void BTNode<DataType>::remove(DataType value_)
     {
         if (!isLeaf())
         {
-            // by the logic, if the child at i has at least as many keys as the order, we delete the predecessor of the key to be deleted and then put it in the key to be deleted's space
-            if (children[i]->keys >= order)
+            // by the logic, if the child at i has at least as many keys as the degree, we delete the predecessor of the key to be deleted and then put it in the key to be deleted's space
+            if (children[i]->keys >= degree)
             {
                 BTNode* Predecessor = children[i];
                 while(!Predecessor->isLeaf())
@@ -356,7 +356,7 @@ void BTNode<DataType>::remove(DataType value_)
                 children[i]->remove(Prior);
             }
             // basically the opposite of above
-            else if (children[i + 1]->keys >= order)
+            else if (children[i + 1]->keys >= degree)
             {
                 BTNode* Successor = children[i + 1];
                 while (!Successor->isLeaf())
@@ -373,23 +373,23 @@ void BTNode<DataType>::remove(DataType value_)
                 BTNode* Next = children[i + 1];
 
                 // copy value at current position to the end of first
-                First->dataArray[order - 1] = dataArray[i];
+                First->dataArray[degree - 1] = dataArray[i];
 
                 // copy child pointers over from the next node to the end of the first node
                 if (!Next.isLeaf())
                 {
                     for(int j = 0; j <= Next->keys; j++)
-                        First->children[order + j] = Next->children[j];
+                        First->children[degree + j] = Next->children[j];
                 }
 
                 // copy the values from next to first
                 for(int j = 0; j < Next->keys; j++)
-                    First->dataArray[order + j] = Next->dataArray[j];
+                    First->dataArray[degree + j] = Next->dataArray[j];
 
                 // fill in the gap in the current node
-                for (int j = i + 2; j <= order; j++)
+                for (int j = i + 2; j <= degree; j++)
                     children[j - 1] = children[j];
-                for (int j = i + 1; j < order; j++)
+                for (int j = i + 1; j < degree; j++)
                     dataArray[j - 1] = dataArray[j];
 
                 // update key counts and free memory

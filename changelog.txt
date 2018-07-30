@@ -15,3 +15,5 @@
 07/29/18 - Davis commit 2
 - Finished both remove methods (i was right. they're long af)
 WARNING: to whoever is doing the insert method, it will also be very long, so watch out
+07/29/18 - Davis commit 3
+- changed the word "order" with the word "degree" in all cases.

@@ -5,12 +5,12 @@ template <class dataType>
 class BTree{
 
     public:
-        BTree(int order_);
+        BTree(int degree_);
         BTree(const BTree& obj);
         ~BTree();
 
         //Getters
-        int getOrder() const; // needed? the person coding main would know this so they wouldn't need to check through a method?
+        int getdegree() const; // needed? the person coding main would know this so they wouldn't need to check through a method?
         BTNode<dataType>* getRoot() const;
 
         //Setters
@@ -24,7 +24,7 @@ class BTree{
 
     private:
         //Member Variables
-        int order;
+        int degree;
         BTNode<dataType>* Root;
 
         //Helper Functinos
@@ -32,16 +32,16 @@ class BTree{
 };
 
 template <class dataType>
-BTree<dataType>::BTree(int order_)
+BTree<dataType>::BTree(int degree_)
 {
-    order = order_;
+    degree = degree_;
     Root = NULL;
 }
 
 template <class dataType>
 BTree<dataType>::BTree(const BTree& obj)
 {
-    order = obj.order;
+    degree = obj.degree;
     Root = obj.root;
 }
 
@@ -52,9 +52,9 @@ BTree<dataType>::~BTree()
 }
 
 template <class dataType>
-int BTree<dataType>::getOrder() const
+int BTree<dataType>::getdegree() const
 {
-    return order;
+    return degree;
 }
 
 template <class dataType>
@@ -83,7 +83,7 @@ BTNode<dataType>* BTree<dataType>::searchHelper(dataType val, BTNode<dataType>* 
         return NULL;
 
     //TODO make a binary search function
-    for(int i = 0; i < order - 1; i++)
+    for(int i = 0; i < degree - 1; i++)
     {
         dataType* arr = curr -> getDataArray();
         if(arr[i] == val)
