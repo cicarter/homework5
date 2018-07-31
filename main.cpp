@@ -1,28 +1,29 @@
 #include "b_tree.h"
 #include <iostream>
+#include <time.h>
 
 using namespace std;
 int main()
 {
-    BTNode<int> test(4);
+    const int size = 30; // this number can be literally as big as you want it to be haha
+    BTree<int> test(3);
 
-    //Setting the array
+    srand(time(NULL));
+    for (int i = 0; i < size; i++)
+        test.insertTemp(rand() % 100);
 
-    //const int size = 3;
-    //int array[size];
 
-    //for(int i = 0; i < size; i++)
-        //array[i] = i + 1;
-
-    // hopefully we'll be able to do this same thing once insert is implemented
-    //test.setDataArray(array);
-
-    //int* print;
-    //print = test.getDataArray();
-
-    //for(int i = 0; i < 3; i++)
-        //cout << print[i] << " -> ";
-
-    //cout << endl;
+    cout << "Initial\n";
+    test.Print();
+    cout << endl;
+    int choice = 0;
+    while(choice != -1)
+    {
+        cout << "Enter choice to remove: ";
+        cin >> choice;
+        test.remove(choice);
+        test.Print();
+        cout << endl;
+    }
 
 }

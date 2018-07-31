@@ -22,6 +22,12 @@ class BTree{
         void remove(dataType value_);
         void print() const;
 
+        //Temporary methods (delete later)
+        void Print()
+        {
+            if (Root != NULL) Root->Print();
+        }
+        void insertTemp(dataType value_);
     private:
         //Member Variables
         int degree;
@@ -84,13 +90,12 @@ BTNode<dataType>* BTree<dataType>::searchHelper(dataType val, BTNode<dataType>* 
         return NULL;
 
     //TODO make a binary search function
-    for(int i = 0; i < degree - 1; i++)
+    for(int i = 0; i < (2 * degree) - 1; i++)
     {
-        dataType* arr = curr -> getDataArray();
-        if(arr[i] == val)
+        if(curr->dataArray[i] == val)
             return curr;
         //Early Stopping
-        else if(arr[i] > val)
+        else if(curr->dataArray[i] > val)
             return searchHelper(val, curr -> getChildren[i]);
     }
 
@@ -180,5 +185,53 @@ void BTree<dataType>::printHelper(BTNode<dataType>* node)
 {
     //TODO recursive call
 }
+
+
+/*
+From here on is from the Internet just to test
+*/
+
+
+// The main function that inserts a new key in this B-Tree
+template <class dataType>
+void BTree<dataType>::insertTemp(dataType value_)
+{
+    // If tree is empty
+    if (Root == NULL)
+    {
+        // Allocate memory for Root
+        Root = new BTNode<dataType>(degree, true);
+        Root->dataArray[0] = value_;  // Insert key
+        Root->keys = 1;  // Update number of keys in Root
+    }
+    else // If tree is not empty
+    {
+        // If Root is full, then tree grows in height
+        if (Root->keys == 2*degree-1)
+        {
+            // Allocate memory for new Root
+            BTNode<dataType> *s = new BTNode<dataType>(degree, false);
+
+            // Make old Root as child of new Root
+            s->children[0] = Root;
+
+            // Split the old Root and move 1 key to the new Root
+            s->splitChild(0, Root);
+
+            // New Root has two children now.  Decide which of the
+            // two children is going to have new key
+            int i = 0;
+            if (s->dataArray[0] < value_)
+                i++;
+            s->children[i]->insertNonFull(value_);
+
+            // Change Root
+            Root = s;
+        }
+        else  // If Root is not full, call insertNonFull for Root
+            Root->insertNonFull(value_);
+    }
+}
+
 
 

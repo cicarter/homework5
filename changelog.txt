@@ -8,12 +8,25 @@
 - improved logic of isFull and isEmpty
 - added changelog.txt file
 - added "keys" variable, which keeps track of the number of keys present in a node
+
 07/29/18 - Davis - commit 1
 - added friend class line to node class. setters and getters no longer needed.
 - Only commented out the setter and getter related changes so you can see what i've done. we can delete later
 - did a bunch of work on the remove method (just by following the logic i found online it's gonna be long af)
+
 07/29/18 - Davis commit 2
 - Finished both remove methods (i was right. they're long af)
 WARNING: to whoever is doing the insert method, it will also be very long, so watch out
+
 07/29/18 - Davis commit 3
 - changed the word "order" with the word "degree" in all cases.
+
+07/30/18 - Davis
+- fixed a few places that were messed up when changing from going by order to by degree
+- fixed a few places that were messed up when removing the getters/setters
+- got a temporary insert implementation from the internet to test my remove method. DONT FORGET TO REMOVE lol
+- finally deleted setters/getters
+- also added print function from internet for temporary use ALSO DON'T FORGET TO REMOVE
+- fixed all bugs in my remove method (took a long time haha)
+- updated main for better testing
+
