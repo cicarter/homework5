@@ -19,6 +19,7 @@ class BTree{
         //Common Data Structures Methods
         BTNode<dataType>* search(dataType val);
         void insert(dataType val);
+        void insertTemp(dataType);
         void remove(dataType value_);
         void print() const;
 
@@ -27,19 +28,22 @@ class BTree{
         {
             if (Root != NULL) Root->Print();
         }
-        void insertTemp(dataType value_);
     private:
+
         //Member Variables
         int degree;
         BTNode<dataType>* Root;
 
         //Helper Functinos
         BTNode<dataType>* searchHelper(dataType val, BTNode<dataType>* curr);
+        BTNode<dataType>* merge(BTNode<dataType>*, BTNode<dataType>*);
+        BTNode<dataType>* breakNode(BTNode<dataType>*&, BTNode<dataType>*);
+        BTNode<dataType>* insertHelper(dataType, BTNode<dataType>*&);
         void printHelper(BTNode<dataType>* node);
 };
 
 template <class dataType>
-BTree<dataType>::BTree(int degree_)
+BTree<dataType>::BTree(int degree_ = 4)
 {
     degree = degree_;
     Root = NULL;
@@ -122,7 +126,7 @@ BTNode<dataType>* BTree<dataType>::merge(BTNode<dataType>* main, BTNode<dataType
         main -> children[i] = side -> children[0];
         main -> children[i + 1] = side -> children[1];
         main -> dataArraySize++;
-
+        main -> leaf = main -> isLeaf();
         return NULL;
 
     }
@@ -199,6 +203,7 @@ BTNode<dataType>* BTree<dataType>::breakNode(BTNode<dataType>*& node, BTNode<dat
     delete together;
 
     //Return
+    node -> leaf = node -> isLeaf();
     return node;
 
 }
@@ -212,6 +217,7 @@ BTNode<dataType>* BTree<dataType>::insertHelper(dataType val, BTNode<dataType>*&
         curr = new BTNode<dataType>(degree * 2);
         curr -> dataArray[0] = val;
         curr -> dataArraySize++;
+        curr -> leaf = curr -> isLeaf();
         return NULL;
     }
 
@@ -303,7 +309,6 @@ void BTree<dataType>::printHelper(BTNode<dataType>* node)
 /*
 From here on is from the Internet just to test
 */
-
 
 // The main function that inserts a new key in this B-Tree
 template <class dataType>

@@ -39,7 +39,7 @@ template <class DataType>
 class BTNode{
     public:
         //Constructors
-        BTNode(int degree_, bool leaf_);
+        BTNode(int degree_);
 
         // Copy constructor
         BTNode(const BTNode& from);
@@ -78,13 +78,13 @@ class BTNode{
 using namespace std;
 
 template <class DataType>
-BTNode<DataType>::BTNode(int degree_, bool leaf_)
+BTNode<DataType>::BTNode(int degree_)
 {
     dataArray = new DataType[2 * degree_ - 1];
     children = new BTNode*[2 * degree_];
     degree = degree_;
     keys = 0;
-    leaf = leaf_;
+    leaf = true;
     for (int i = 0; i < 2 * degree_; i++)
         children[i] = NULL;
 }
