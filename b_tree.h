@@ -21,7 +21,7 @@ class BTree{
         void insert(dataType val);
         void insertTemp(dataType);
         void remove(dataType value_);
-        void print() const;
+        void print();
 
         //Temporary methods (delete later)
         void Print()
@@ -43,7 +43,7 @@ class BTree{
 };
 
 template <class dataType>
-BTree<dataType>::BTree(int degree_ = 4)
+BTree<dataType>::BTree(int degree_)
 {
     degree = degree_;
     Root = NULL;
@@ -288,7 +288,7 @@ void BTree<dataType>::remove(dataType value_)
 // Author: Sam Yeager
 //-------------------------------------------------
 template <class dataType>
-void BTree<dataType>::print() const
+void BTree<dataType>::print()
 {
     printHelper(Root);
 }
