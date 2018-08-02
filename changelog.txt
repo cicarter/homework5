@@ -30,8 +30,12 @@ WARNING: to whoever is doing the insert method, it will also be very long, so wa
 - fixed all bugs in my remove method (took a long time haha)
 - updated main for better testing
 
-08/01/18 - Davis
+08/01/18 - Davis commit 1
 - No one else used the changelog lol
 - removed both insert functions and wrote my own
 - removed both print functions and wrote my own
+
+08/01/18 - Davis commit 2
+- fixed all the things
+- cleaned up everything
 
