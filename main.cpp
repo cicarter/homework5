@@ -10,7 +10,7 @@ int main()
 
     srand(time(NULL));
     for (int i = 0; i < size; i++)
-        test.insert(rand() % 100);
+        test.insert2(rand() % 100);
 
 
     cout << "Initial\n";
