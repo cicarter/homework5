@@ -30,6 +30,7 @@ class BTree{
         //Helper Functinos
         BTNode<dataType>* searchHelper(dataType val, BTNode<dataType>* curr);
         void printHelper(BTNode<dataType>* current) const;
+	void deconstructHelper(BTNode<dataType>* current) const;
         void insertHelper(dataType value_, BTNode<dataType>* current);
 };
 
@@ -303,5 +304,30 @@ void BTree<dataType>::printHelper(BTNode<dataType>* current) const
         }
         if(!current->leaf)
             printHelper(current->children[i]);
+    }
+}
+
+//-------------------------------------------------
+// Method: Deconstruct Helper
+// Purpose: delete nodes recursively
+// Date: 08/01/18
+// Author: Wesley Nimmo
+//-------------------------------------------------
+template <class dataType>
+void BTree<dataType>::deconstructHelper(BTNode<dataType>* current) const
+{
+    if (current != NULL)
+    {
+        // loop through the node (remember we have current->keys keys and current->keys + 1 children)
+        int i;
+        for (i = 0; i < current->keys; i++)
+        {
+            if(!current->leaf)
+                deconstructHelper(current->children[i]);
+            else
+		delete[] current;
+        }
+        if(!current->leaf)
+            deconstructHelper(current->children[i]);
     }
 }
