@@ -153,6 +153,8 @@ int main()
                 strings.print();
             }
         }
+	else if (choice == 6)
+	   return 0;
     }
 
 }
