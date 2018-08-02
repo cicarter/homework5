@@ -326,7 +326,7 @@ void BTree<dataType>::deconstructHelper(BTNode<dataType>* current) const
             if(!current->leaf)
                 deconstructHelper(current->children[i]);
             else
-		delete[] current;
+		delete current;
         }
         if(!current->leaf)
             deconstructHelper(current->children[i]);
