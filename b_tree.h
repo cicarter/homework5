@@ -278,7 +278,6 @@ void BTree<dataType>::remove(dataType value_)
 template <class dataType>
 void BTree<dataType>::print() const
 {
-    cout << "In print" << endl;
     if (Root != NULL)
         printHelper(Root);
 }
