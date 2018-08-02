@@ -318,7 +318,7 @@ void BTree<dataType>::insertTemp(dataType value_)
     if (Root == NULL)
     {
         // Allocate memory for Root
-        Root = new BTNode<dataType>(degree, true);
+        Root = new BTNode<dataType>(degree);
         Root->dataArray[0] = value_;  // Insert key
         Root->keys = 1;  // Update number of keys in Root
     }
@@ -328,7 +328,7 @@ void BTree<dataType>::insertTemp(dataType value_)
         if (Root->keys == 2*degree-1)
         {
             // Allocate memory for new Root
-            BTNode<dataType> *s = new BTNode<dataType>(degree, false);
+            BTNode<dataType> *s = new BTNode<dataType>(degree);
 
             // Make old Root as child of new Root
             s->children[0] = Root;
