@@ -422,7 +422,7 @@ void BTNode<DataType>::splitChild(int i, BTNode *y)
 {
     // Create a new node which is going to store (t-1) keys
     // of y
-    BTNode *z = new BTNode(y->degree, y->leaf);
+    BTNode *z = new BTNode(y->degree);
     z->keys = degree - 1;
 
     // Copy the last (t-1) keys of y to z
