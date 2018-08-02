@@ -53,12 +53,6 @@ class BTNode{
         bool isLeaf() const;
         void remove(DataType value_);
 
-        // temporary methods (delete before submission
-        void Print();
-        void insertNonFull(int value_);
-        void splitChild(int i, BTNode* y);
-
-
         template <class dataType>
         friend class BTree;
 
@@ -105,7 +99,7 @@ BTNode<DataType>::~BTNode()
 template <class DataType>
 bool BTNode<DataType>::isEmpty() const
 {
-    return dataArraySize == 0;
+    return keys == 0;
 }
 
 template <class DataType>
@@ -354,130 +348,6 @@ void BTNode<DataType>::remove(DataType value_)
             keys--;
         }
     }
-}
-
-
-
-
-
-
-
-
-/*
-From here on is just a temporary insert implementation from the Internet so i can test remove
-Don't forget to delete because this was straight up copied lol
-*/
-
-// A utility function to insert a new key in this node
-// The assumption is, the node must be non-full when this
-// function is called
-template <class DataType>
-void BTNode<DataType>::insertNonFull(int value_)
-{
-    // Initialize index as index of rightmost element
-    int i = keys-1;
-
-    // If this is a leaf node
-    if (leaf == true)
-    {
-        // The following loop does two things
-        // a) Finds the location of new key to be inserted
-        // b) Moves all greater keys to one place ahead
-        while (i >= 0 && dataArray[i] > value_)
-        {
-            dataArray[i+1] = dataArray[i];
-            i--;
-        }
-
-        // Insert the new key at found location
-        dataArray[i+1] = value_;
-        keys = keys+1;
-    }
-    else // If this node is not leaf
-    {
-        // Find the child which is going to have the new key
-        while (i >= 0 && dataArray[i] > value_)
-            i--;
-
-        // See if the found child is full
-        if (children[i+1]->keys == 2*degree-1)
-        {
-            // If the child is full, then split it
-            splitChild(i+1, children[i+1]);
-
-            // After split, the middle key of C[i] goes up and
-            // C[i] is splitted into two.  See which of the two
-            // is going to have the new key
-            if (dataArray[i+1] < value_)
-                i++;
-        }
-        children[i+1]->insertNonFull(value_);
-    }
-}
-
-// A utility function to split the child y of this node
-// Note that y must be full when this function is called
-template <class DataType>
-void BTNode<DataType>::splitChild(int i, BTNode *y)
-{
-    // Create a new node which is going to store (t-1) keys
-    // of y
-    BTNode *z = new BTNode(y->degree);
-    z->keys = degree - 1;
-
-    // Copy the last (t-1) keys of y to z
-    for (int j = 0; j < degree-1; j++)
-        z->dataArray[j] = y->dataArray[j+degree];
-
-    // Copy the last t children of y to z
-    if (y->leaf == false)
-    {
-        for (int j = 0; j < degree; j++)
-            z->children[j] = y->children[j+degree];
-    }
-
-    // Reduce the number of keys in y
-    y->keys = degree - 1;
-
-    // Since this node is going to have a new child,
-    // create space of new child
-    for (int j = keys; j >= i+1; j--)
-        children[j+1] = children[j];
-
-    // Link the new child to this node
-    children[i+1] = z;
-
-    // A key of y will move to this node. Find location of
-    // new key and move all greater keys one space ahead
-    for (int j = keys-1; j >= i; j--)
-        dataArray[j+1] = dataArray[j];
-
-    // Copy the middle key of y to this node
-    dataArray[i] = y->dataArray[degree-1];
-
-    // Increment count of keys in this node
-    keys = keys + 1;
-}
-
-// Function to Print all nodes in a subtree Rooted with this node
-template <class DataType>
-void BTNode<DataType>::Print()
-{
-    // There are n keys and n+1 children, travers through n keys
-    // and first n children
-    int i;
-    for (i = 0; i < keys; i++)
-    {
-        // If this is not leaf, then before printing key[i],
-        // Print the subtree Rooted with child C[i].
-        if (leaf == false)
-            children[i]->Print();
-        cout << " " << dataArray[i];
-    }
-
-    // Print the subtree Rooted with last child
-    if (leaf == false)
-        children[i]->Print();
 }
 
 #endif
