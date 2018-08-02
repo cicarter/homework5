@@ -1,3 +1,11 @@
+//-------------------------------------------------
+// FileName: b_tree.h
+// Purpose: Define and implement the methods and data associated with the BTree class
+// Date: 07/17/18
+// Authors: Chris Carter, Davis Campbell, Wesley Nimmo, Sam Yeager
+//-------------------------------------------------
+
+
 #include "b_tree_node.h"
 #include <cstdlib>
 
@@ -6,42 +14,31 @@ class BTree{
 
     public:
         BTree(int degree_);
-        BTree(const BTree& obj);
         ~BTree();
-
-        //Getters
-        int getdegree() const; // needed? the person coding main would know this so they wouldn't need to check through a method?
-        BTNode<dataType>* getRoot() const;
-
-        //Setters
-        void setRoot(BTNode<dataType>* Root); // needed?
 
         //Common Data Structures Methods
         BTNode<dataType>* search(dataType val);
-        void insert(dataType val);
-        void insertTemp(dataType);
+        void insert(dataType value_);
         void remove(dataType value_);
-        void print();
+        void print() const;
 
-        //Temporary methods (delete later)
-        void Print()
-        {
-            if (Root != NULL) Root->Print();
-        }
     private:
-
         //Member Variables
         int degree;
         BTNode<dataType>* Root;
 
         //Helper Functinos
         BTNode<dataType>* searchHelper(dataType val, BTNode<dataType>* curr);
-        BTNode<dataType>* merge(BTNode<dataType>*, BTNode<dataType>*);
-        BTNode<dataType>* breakNode(BTNode<dataType>*&, BTNode<dataType>*);
-        BTNode<dataType>* insertHelper(dataType, BTNode<dataType>*&);
-        void printHelper(BTNode<dataType>* node);
+        void printHelper(BTNode<dataType>* current) const;
+        void insertHelper(dataType value_, BTNode<dataType>* current);
 };
 
+//-------------------------------------------------
+// Method: Constructor
+// Purpose: Initialize the private variables for the tree
+// Date: 07/17/18
+// Author: Chris Carter
+//-------------------------------------------------
 template <class dataType>
 BTree<dataType>::BTree(int degree_)
 {
@@ -49,42 +46,36 @@ BTree<dataType>::BTree(int degree_)
     Root = NULL;
 }
 
-template <class dataType>
-BTree<dataType>::BTree(const BTree& obj)
-{
-    degree = obj.degree;
-    Root = obj.root;
-}
-
+//-------------------------------------------------
+// Method: Deconstructor
+// Purpose: free space from the tree
+// Date: 08/01/18
+// Author: Wesley Nimmo
+//-------------------------------------------------
 template <class dataType>
 BTree<dataType>::~BTree()
 {
     //TODO add destructor
 }
 
-template <class dataType>
-int BTree<dataType>::getdegree() const
-{
-    return degree;
-}
-
-template <class dataType>
-BTNode<dataType>* BTree<dataType>::getRoot() const
-{
-    return Root;
-}
-
-template <class dataType>
-void BTree<dataType>::setRoot(BTNode<dataType>* root)
-{
-    Root = root;
-}
-
+//-------------------------------------------------
+// Method: Search
+// Purpose: Search for an element within the tree
+// Date: 07/17/18
+// Author: Chris Carter
+//-------------------------------------------------
 template <class dataType>
 BTNode<dataType>* BTree<dataType>::search(dataType val)
 {
     return searchHelper(val, Root);
 }
+
+//-------------------------------------------------
+// Method: SearchHelper
+// Purpose: Help to search for an element in the tree
+// Date: 07/17/18
+// Author: Chris Carter
+//-------------------------------------------------
 
 template <class dataType>
 BTNode<dataType>* BTree<dataType>::searchHelper(dataType val, BTNode<dataType>* curr)
@@ -93,7 +84,7 @@ BTNode<dataType>* BTree<dataType>::searchHelper(dataType val, BTNode<dataType>* 
     if(curr == NULL)
         return NULL;
 
-    //TODO make a binary search function
+    // binary search function
     for(int i = 0; i < (2 * degree) - 1; i++)
     {
         if(curr->dataArray[i] == val)
@@ -105,150 +96,147 @@ BTNode<dataType>* BTree<dataType>::searchHelper(dataType val, BTNode<dataType>* 
 
 }
 
+//-------------------------------------------------
+// Method: Insert
+// Purpose: Insert an element into the B-Tree
+// Date: 08/01/18
+// Author: Davis Campbell
+//-------------------------------------------------
 template <class dataType>
-void BTree<dataType>::insert(dataType val)
+void BTree<dataType>::insert(dataType value_)
 {
-    insertHelper(val, Root);
-}
-
-template <class dataType>
-BTNode<dataType>* BTree<dataType>::merge(BTNode<dataType>* main, BTNode<dataType>* side)
-{
-    if(!main -> isFull())
+    // if the tree is empty just make a new node
+    if (Root == NULL)
     {
-        int i;
-        for(i = main -> dataArraySize; main -> children[i] != side; i--)
-        {
-            main -> dataArray[i] = main -> dataArray[i -1];
-            main -> children[i] = main -> children[i - 1];
-        }
-        main -> dataArray[i] = side -> dataArray[0];
-        main -> children[i] = side -> children[0];
-        main -> children[i + 1] = side -> children[1];
-        main -> dataArraySize++;
-        main -> leaf = main -> isLeaf();
-        return NULL;
-
+        Root = new BTNode<dataType>(degree, true);
+        Root->dataArray[0] = value_;
+        Root->keys = 1;
     }
-    else
-        return breakNode(main, side);
-}
-
-//Put this in the BTNode Class
-template <class dataType>
-BTNode<dataType>* BTree<dataType>::breakNode(BTNode<dataType>*& node, BTNode<dataType>* single)
-{
-
-    //Put all the nodes into a bigger array
-    BTNode<dataType>* together = new BTNode<dataType>(degree * 2 + 1);
-
-    bool inserted = false;
-    for(int i = 0, k = 0, c = 0; k <  degree * 2; i++, k++, c++)
-    {
-        if(k == degree * 2 - 1 && !inserted)
-        {
-            together -> dataArray[k] = single -> dataArray[0];
-            together -> dataArraySize++;
-            together -> children[c++] = single -> children[0];
-            together -> children[c] = single -> children[1];
-            inserted = true;
-            break;
-        }
-
-        else if(single -> dataArray[0] < node -> dataArray[i] && !inserted)
-        {
-            together -> dataArray[k] = single -> dataArray[0];
-            together -> dataArraySize++;
-            together -> children[c++] = single -> children[0];
-            together -> children[c] = single -> children[1];
-            inserted = true;
-        }
-
-        together -> dataArray[k] = node -> dataArray[i];
-        together -> dataArraySize++;
-        together -> children[k] = node -> children[k];
-    }
-
-    //Calculate the median
-    int median = (degree * 2 + 1) / 2 - 1;
-    dataType val = together -> dataArray[median];
-
-    //Everything in the array < med goes in split one
-    BTNode<dataType>* split1 = new BTNode<dataType>(degree * 2);
-    //Everything in the array > med goes in split one
-    BTNode<dataType>* split2 = new BTNode<dataType>(degree * 2);
-
-    //Set the data array
-    for(int i = 0; i < median; i++)
-        split1 -> dataArray[split1 -> dataArraySize++] = together -> dataArray[i];
-    for(int i = median + 1; i < degree * 2; i++)
-    {
-        split2 -> dataArray[i - median - 1] = together -> dataArray[i];
-        split2 -> dataArraySize++;
-    }
-
-    //Set up the children array
-    for(int i = 0; i < (degree * 2 + 1) / 2; i++)
-        split1 -> children[i] = together -> children[i];
-    for(int i = (degree * 2 + 1) / 2; i < degree * 2 + 1; i++)
-        split2 -> children[i - (degree * 2 + 1) / 2] = together -> children[i];
-
-    //Set up node
-    node -> dataArray[0] = val; //Problem Line
-    node -> children[0] = split1;
-    node -> children[1] = split2;
-    node -> dataArraySize = 1;
-
-    //Deleting tmp array
-    delete together;
-
-    //Return
-    node -> leaf = node -> isLeaf();
-    return node;
-
-}
-
-template <class dataType>
-BTNode<dataType>* BTree<dataType>::insertHelper(dataType val, BTNode<dataType>*& curr)
-{
-    if(curr == NULL)
-    {
-        //Create a new node
-        curr = new BTNode<dataType>(degree * 2);
-        curr -> dataArray[0] = val;
-        curr -> dataArraySize++;
-        curr -> leaf = curr -> isLeaf();
-        return NULL;
-    }
-
-    dataType* data = curr -> dataArray;
-    BTNode<dataType>** children = curr -> children;
-
-    if(curr -> isLeaf() && curr -> isFull())
-    {
-        BTNode<dataType>* valNode = new BTNode<dataType>(degree * 2);
-        valNode -> dataArray[0] = val;
-        return breakNode(curr, valNode);
-    }
-    else if(curr -> isLeaf())
-    {
-        int& offset = curr -> dataArraySize;
-        data[offset++] = val;
-        return NULL;
-    }
-
+    // if the tree is not empty
     else
     {
-        //Node must have child insert into child
-        int i;
-        for(i = 0; i < curr -> dataArraySize; i++)
-            if(val < data[i])
-                break;
-        BTNode<dataType>* test = insertHelper(val, children[i]);
-        if(test != NULL)
-            return merge(curr, test);
+        // if the root is not full, run insertHelper to simply add to it
+        if (!(Root->isFull()))
+            insertHelper(value_, Root);
+        // if it is full, we need to split it
         else
-            return NULL;
+        {
+        // splitting the root
+            // making 2 new nodes for it to be split into
+            BTNode<dataType>* newRoot = new BTNode<dataType>(degree, false);
+            BTNode<dataType>* sibling = new BTNode<dataType>(degree, Root->leaf);
+
+            // Moving data from the old root to the new sibling
+            for (int j = 0; j < degree - 1; j++)
+                sibling->dataArray[j] = Root->dataArray[j + degree];
+            if (!(Root->leaf))
+            {
+                for (int j = 0; j < degree; j++)
+                    sibling->children[j] = Root->children[j + degree];
+            }
+
+            // making space in the new root for the old median key
+            for (int j = newRoot->keys; j >= 1; j--)
+                newRoot->children[j+1] = newRoot->children[j];
+            for (int j = newRoot->keys - 1; j >= 0; j--)
+                newRoot->dataArray[j + 1] = newRoot->dataArray[j];
+
+            newRoot->dataArray[0] = Root->dataArray[degree-1];
+
+            // setting pointers and updating keys
+            newRoot->children[0] = Root;
+            newRoot->children[1] = sibling;
+            Root->keys = degree - 1;
+            sibling->keys = degree - 1;
+            newRoot->keys++;
+            Root = newRoot;
+
+            // find the correct point at which we should look to insert
+            int i = 0;
+            if (newRoot->dataArray[0] < value_)
+                i++;
+
+            // Insert into the now for sure non-full node
+            insertHelper(value_, newRoot->children[i]);
+        }
+
+    }
+}
+
+//-------------------------------------------------
+// Method: Insert Helper
+// Purpose: Insert an element into the B-Tree
+// Date: 08/01/18
+// Author: Davis Campbell
+//-------------------------------------------------
+template <class dataType>
+void BTree<dataType>::insertHelper(dataType value_, BTNode<dataType>* current)
+{
+    // set an index to the last data point position of the current array
+    int i = current->keys - 1;
+
+    // if the current is a leaf, we just move over the values and put it in
+    if (current->leaf)
+    {
+        // move everything over
+        while (i >= 0 && current->dataArray[i] > value_)
+        {
+            current->dataArray[i+1] = current->dataArray[i];
+            i--;
+        }
+
+        // put in the value and update the number of keys
+        current->dataArray[i+1] = value_;
+        current->keys++;
+    }
+    // if current is not a leaf
+    else
+    {
+        // get the position at which the insert should be
+        while (i >= 0 && current->dataArray[i] > value_)
+            i--;
+
+        // if the child in which we would like to put the new value is full, we need to split it and move the median value up to current
+        if (current->children[i+1]->isFull())
+        {
+            // new index value for convenience
+            int q = i + 1;
+
+            // only create one new node this time because we already have the parent node
+            BTNode<dataType>* sibling = new BTNode<dataType>(current->children[i + 1]->degree, current->children[i + 1]->leaf);
+
+
+            // move the data from current to the new node
+            for (int j = 0; j < degree-1; j++)
+                sibling->dataArray[j] = current->children[i + 1]->dataArray[j + degree];
+            if (!current->children[i + 1]->leaf)
+            {
+                for (int j = 0; j < degree; j++)
+                    sibling->children[j] = current->children[i + 1]->children[j + degree];
+            }
+
+
+            // make space in current for the median node which is moving up
+            for (int j = current->keys; j >= q+1; j--)
+                current->children[j+1] = current->children[j];
+            for (int j = current->keys - 1; j >= q; j--)
+                current->dataArray[j+1] = current->dataArray[j];
+
+            // put the node in place
+            current->dataArray[q] = current->children[i + 1]->dataArray[degree - 1];
+
+            // update pointers and keys
+            current->children[i + 1]->keys = degree - 1;
+            sibling->keys = degree - 1;
+            current->keys++;
+            current->children[q+1] = sibling;
+
+            // see which child we would like to go into
+            if (current->dataArray[i+1] < value_)
+                i++;
+        }
+        // do it all again with that child!
+        insertHelper(value_, current->children[i+1]);
     }
 }
 
@@ -273,7 +261,7 @@ void BTree<dataType>::remove(dataType value_)
     if (Root->keys == 0)
     {
         BTNode<dataType>* temp = Root;
-        if(Root->isLeaf())
+        if(Root->leaf)
             Root = NULL;
         else
             Root = Root->children[0];
@@ -283,73 +271,37 @@ void BTree<dataType>::remove(dataType value_)
 
 //-------------------------------------------------
 // Method: Print
-// Purpose: Public print function that calls PrintHelper
-// Date: 07/30/18
-// Author: Sam Yeager
+// Purpose: Print the tree in sorted order
+// Date: 08/01/18
+// Author: Davis Campbell
 //-------------------------------------------------
 template <class dataType>
-void BTree<dataType>::print()
+void BTree<dataType>::print() const
 {
-    printHelper(Root);
+    if (Root != NULL)
+        printHelper(Root);
 }
 
 //-------------------------------------------------
-// Method: printHelper
-// Purpose: Private function that prints values in descending order (lowest value first).
-// Date: 07/30/18
-// Author: Sam Yeager
+// Method: Print Helper
+// Purpose: print nodes recursively
+// Date: 08/01/18
+// Author: Davis Campbell
 //-------------------------------------------------
-template<class dataType>
-void BTree<dataType>::printHelper(BTNode<dataType>* node)
-{
-    //TODO recursive call
-}
-
-
-/*
-From here on is from the Internet just to test
-*/
-
-// The main function that inserts a new key in this B-Tree
 template <class dataType>
-void BTree<dataType>::insertTemp(dataType value_)
+void BTree<dataType>::printHelper(BTNode<dataType>* current) const
 {
-    // If tree is empty
-    if (Root == NULL)
+    if (current != NULL)
     {
-        // Allocate memory for Root
-        Root = new BTNode<dataType>(degree);
-        Root->dataArray[0] = value_;  // Insert key
-        Root->keys = 1;  // Update number of keys in Root
-    }
-    else // If tree is not empty
-    {
-        // If Root is full, then tree grows in height
-        if (Root->keys == 2*degree-1)
+        // loop through the node (remember we have current->keys keys and current->keys + 1 children)
+        int i;
+        for (i = 0; i < current->keys; i++)
         {
-            // Allocate memory for new Root
-            BTNode<dataType> *s = new BTNode<dataType>(degree);
-
-            // Make old Root as child of new Root
-            s->children[0] = Root;
-
-            // Split the old Root and move 1 key to the new Root
-            s->splitChild(0, Root);
-
-            // New Root has two children now.  Decide which of the
-            // two children is going to have new key
-            int i = 0;
-            if (s->dataArray[0] < value_)
-                i++;
-            s->children[i]->insertNonFull(value_);
-
-            // Change Root
-            Root = s;
+            if(!current->leaf)
+                printHelper(current->children[i]);
+            cout << current->dataArray[i] << " ";
         }
-        else  // If Root is not full, call insertNonFull for Root
-            Root->insertNonFull(value_);
+        if(!current->leaf)
+            printHelper(current->children[i]);
     }
 }
-
-
-

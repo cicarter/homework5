@@ -5,24 +5,27 @@
 using namespace std;
 int main()
 {
-    const int size = 30; // this number can be literally as big as you want it to be haha
+    const int size = 70; // this number can be literally as big as you want it to be haha
     BTree<int> test(3);
 
     srand(time(NULL));
     for (int i = 0; i < size; i++)
-        test.insert(rand() % 100);
-
+    {
+        int j = rand() % 1000;
+        test.insert(j);
+    }
+    cout << endl;
 
     cout << "Initial\n";
-    test.Print();
+    test.print();
     cout << endl;
     int choice = 0;
     while(choice != -1)
     {
-        cout << "Enter choice to remove: ";
+        cout << "Enter choice to remove (-1 for quit): ";
         cin >> choice;
         test.remove(choice);
-        test.Print();
+        test.print();
         cout << endl;
     }
 
