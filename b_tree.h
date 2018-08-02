@@ -56,7 +56,8 @@ BTree<dataType>::BTree(int degree_)
 template <class dataType>
 BTree<dataType>::~BTree()
 {
-    //TODO add destructor
+    if (Root != NULL)
+        deconstructHelper(Root);
 }
 
 //-------------------------------------------------
