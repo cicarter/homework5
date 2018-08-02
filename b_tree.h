@@ -93,7 +93,7 @@ BTNode<dataType>* BTree<dataType>::searchHelper(dataType val, BTNode<dataType>* 
             return curr;
         //Early Stopping
         else if(curr->dataArray[i] > val)
-            return searchHelper(val, curr -> getChildren[i]);
+            return searchHelper(val, curr -> children[i]);
     }
 
 }
